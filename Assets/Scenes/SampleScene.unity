@@ -1785,7 +1785,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0680840e4e02f469a8fd756b8efca243, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5283,10 +5283,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 788dc831df69e4666b9d85b0b336b0d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 200
+  sensitivity: 50
   smoothSpeed: 5
-  minScale: {x: 1, y: 0.001, z: 1}
-  maxScale: {x: 1.2, y: 0.001, z: 1.2}
+  minScale: {x: 0.1, y: 0.001, z: 0.1}
+  maxScale: {x: 1.5, y: 0.001, z: 1.5}
 --- !u!82 &1545436946
 AudioSource:
   m_ObjectHideFlags: 0
