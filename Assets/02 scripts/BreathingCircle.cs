@@ -10,13 +10,16 @@ public class BreathingCircle : MonoBehaviour
     public Vector3 maxScale = new Vector3(1.2f, 0.01f, 1.2f);
 
     [Header("Feedback Instellingen")]
-    public Renderer breathingRenderer; // NU Renderer ipv UI Image!
+    public Renderer breathingRenderer; // Renderer ipv UI Image!
     public Color goodColor = Color.green;
     public Color badColor = Color.red;
-    public float tolerance = 0.1f;
+    public float tolerance = 0.05f; // Hoe nauwkeurig je moet volgen
 
     [Header("Ademhalingsritme")]
     public BreathingAnimation breathingAnimation;
+
+    [Header("Visuele Correctie")]
+    public float scaleOffset = 0.05f; // ➔ Hoeveel groter de ademcirkel visueel moet lijken
 
     private AudioSource audioSource;
     private float[] samples = new float[256];
@@ -62,7 +65,7 @@ public class BreathingCircle : MonoBehaviour
         float loudness = sum / samples.Length * sensitivity;
         loudness = Mathf.Clamp01(loudness);
 
-        // 🔥 EXTRA DEBUG: toon puur hoeveel geluid er gemeten wordt
+        // 🔥 Debug volume microfoon
         Debug.Log($"📣 Microfoon loudness: {loudness:F3}");
 
         float inverseLoudness = 1f - loudness;
@@ -70,19 +73,36 @@ public class BreathingCircle : MonoBehaviour
         Vector3 targetScale = Vector3.Lerp(minScale, maxScale, inverseLoudness);
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * smoothSpeed);
 
-        // 🌟 Vergelijk inverseLoudness met ademhalingsritme
+        // 🌟 Correcte schaalvergelijking mét offset
         float zonDoel = Mathf.Lerp(breathingAnimation.minScale, breathingAnimation.maxScale, (Mathf.Sin(Time.time * breathingAnimation.speed) + 1f) / 2f);
-        float verschil = Mathf.Abs(inverseLoudness - (zonDoel - breathingAnimation.minScale) / (breathingAnimation.maxScale - breathingAnimation.minScale));
+        float ademSchaal = Mathf.Lerp(breathingAnimation.minScale, breathingAnimation.maxScale, inverseLoudness);
 
-        // 🌈 Verander kleur én emissie van de cirkel op basis van het verschil
+        // ➡️ Visueel corrigeren
+        ademSchaal += scaleOffset;
+
+        float verschil = ademSchaal - zonDoel;
+
+        float mappedDifference = 0f;
+        if (verschil <= 0f)
+        {
+            // Ademcirkel kleiner of gelijk aan zon -> smooth verschil
+            mappedDifference = Mathf.Clamp01(Mathf.Abs(verschil) / tolerance);
+        }
+        else
+        {
+            // Ademcirkel groter dan zon -> direct maximaal rood
+            mappedDifference = 1f;
+        }
+
         if (breathingRenderer != null)
         {
-            Color targetColor = (verschil < tolerance) ? goodColor : badColor;
+            // 🌈 Smooth kleur blending
+            Color targetColor = Color.Lerp(goodColor, badColor, mappedDifference);
             breathingRenderer.material.color = Color.Lerp(breathingRenderer.material.color, targetColor, Time.deltaTime * 5f);
 
-            // ✨ Emission aanpassen
-            Color emissionColor = (verschil < tolerance) ? goodColor * 2f : badColor * 0.5f;
-            breathingRenderer.material.SetColor("_EmissionColor", Color.Lerp(breathingRenderer.material.GetColor("_EmissionColor"), emissionColor, Time.deltaTime * 5f));
+            // ✨ Smooth emissie blending
+            Color targetEmission = Color.Lerp(goodColor * 2f, badColor * 0.5f, mappedDifference);
+            breathingRenderer.material.SetColor("_EmissionColor", Color.Lerp(breathingRenderer.material.GetColor("_EmissionColor"), targetEmission, Time.deltaTime * 5f));
         }
     }
 }
