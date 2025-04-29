@@ -8729,16 +8729,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 788dc831df69e4666b9d85b0b336b0d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 16
+  sensitivity: 100
   smoothSpeed: 5
-  minScale: {x: 0.8, y: 0.01, z: 0.8}
-  maxScale: {x: 1.2, y: 0.01, z: 1.2}
+  minScale: {x: 1.2, y: 0.01, z: 1.2}
+  maxScale: {x: 1.8, y: 0.01, z: 1.8}
   breathingRenderer: {fileID: 2085777411}
   goodColor: {r: 0, g: 1, b: 0, a: 1}
   badColor: {r: 1, g: 0, b: 0, a: 1}
   tolerance: 0.1
   breathingAnimation: {fileID: 1051956540}
-  scaleOffset: -0.31
+  scaleOffset: 0
 --- !u!82 &2085777408
 AudioSource:
   m_ObjectHideFlags: 0
