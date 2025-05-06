@@ -12,7 +12,7 @@ public class PlayBowlAnimationOnSelect : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         var interactable = GetComponent<XRSimpleInteractable>();
-        interactable.activated.AddListener(OnActivate);
+        interactable.selectEntered.AddListener(OnSelect);
 
         if (animator != null)
         {
@@ -20,7 +20,7 @@ public class PlayBowlAnimationOnSelect : MonoBehaviour
         }
     }
 
-    public void OnActivate(ActivateEventArgs args)
+    public void OnSelect(SelectEnterEventArgs args)
     {
         isPlaying = !isPlaying;
         Debug.Log("Bowl toggled: " + (isPlaying ? "Play" : "Pause"));
