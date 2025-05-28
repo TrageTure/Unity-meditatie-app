@@ -10,6 +10,7 @@ public class PlayBowlAnimationOnSelect : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("PlayBowlAnimationOnSelect script started.");
         animator = GetComponent<Animator>();
         var interactable = GetComponent<XRSimpleInteractable>();
         interactable.selectEntered.AddListener(OnSelect);

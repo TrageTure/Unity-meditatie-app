@@ -66,7 +66,7 @@ public class BreathingCircle : MonoBehaviour
         loudness = Mathf.Clamp01(loudness);
 
         // 🔥 Debug volume microfoon
-        Debug.Log($"📣 Microfoon loudness: {loudness:F3}");
+        // Debug.Log($"📣 Microfoon loudness: {loudness:F3}");
 
         float inverseLoudness = 1f - loudness;
 
