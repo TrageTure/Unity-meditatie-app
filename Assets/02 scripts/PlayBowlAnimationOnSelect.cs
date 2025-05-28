@@ -4,6 +4,9 @@ using UnityEngine.XR.Interaction.Toolkit;
 [RequireComponent(typeof(XRSimpleInteractable))]
 public class PlayBowlAnimationOnSelect : MonoBehaviour
 {
+    private float lastSelectTime = 0f;
+    public float cooldownDuration = 1f; // aantal seconden tussen selecties
+
     public AudioSource bowlSound;
     private Animator animator;
     private bool isPlaying = false;
@@ -23,22 +26,33 @@ public class PlayBowlAnimationOnSelect : MonoBehaviour
 
     public void OnSelect(SelectEnterEventArgs args)
     {
-        isPlaying = !isPlaying;
-        Debug.Log("Bowl toggled: " + (isPlaying ? "Play" : "Pause"));
+        if (Time.time - lastSelectTime < cooldownDuration)
+            return; // negeer als we nog in cooldown zijn
 
-        if (animator != null)
-        {
-            animator.SetBool("Play", isPlaying);
-            animator.speed = isPlaying ? 1f : 0f;
-        }
+        lastSelectTime = Time.time;
 
-        if (bowlSound != null)
+        if (animator == null || bowlSound == null) return;
+
+        if (!isPlaying)
         {
-            if (isPlaying && !bowlSound.isPlaying)
+            isPlaying = true;
+            Debug.Log("Bowl playing");
+
+            animator.SetBool("Play", true);
+            animator.speed = 1f;
+            if (!bowlSound.isPlaying)
             {
                 bowlSound.Play();
             }
-            else if (!isPlaying && bowlSound.isPlaying)
+        }
+        else
+        {
+            isPlaying = false;
+            Debug.Log("Bowl paused");
+
+            animator.SetBool("Play", false);
+            animator.speed = 0f;
+            if (bowlSound.isPlaying)
             {
                 bowlSound.Pause();
             }
